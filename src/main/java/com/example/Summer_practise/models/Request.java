@@ -15,11 +15,11 @@ public class Request {
     private String          request_id;
     private LocalDateTime   closing_date;
     private String          contact_name;
-    private int             contact_phone;
+    private String             contact_phone;
     private LocalDateTime   creation_date;
     private String          description;
     private String          executor;
-    private int             inn;
+    private String             inn;
     private String          response;
     private String          status;
 }
