@@ -13,7 +13,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class RequestService {
@@ -53,28 +52,29 @@ public class RequestService {
     }
 
     /** Закрытие запроса */
-//    public void closeRequest(String request_id, String response) {
-//        Request request = requestRepository.findById(request_id).orElseThrow();
-//        if (!"IN_PROGRESS".equals(request.getStatus()) || !request.getExecutor().equals(request.getExecutor())) {
-//            throw new IllegalStateException("Request not assigned to current executor.");
-//        }
-//        request.setStatus("CLOSED");
-//        request.setResponse(response);
-//        request.setClosing_date(LocalDateTime.now());
-//        requestRepository.save(request);
-//        kafkaTemplate.send(TOPIC, "Closed request: " + request_id);
-//    }
+    public Request closeRequest(Long id, String response) {
+        Request request = requestRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Request not found"));
+        if (!request.getStatus().equals(RequestStatus.ASSIGNED)) {
+            throw new IllegalStateException("Only assigned requests can be closed");
+        }
+        request.setResponse(response);
+        request.setStatus(RequestStatus.CLOSED);
+        request.setClosing_date(LocalDateTime.now());
+        return requestRepository.save(request);
+    }
+
 
     /** Отклонение запроса */
-//    public void rejectRequest(String request_id, String response) {
-//        Request request = requestRepository.findById(request_id).orElseThrow();
-//        if (!"IN_PROGRESS".equals(request.getStatus()) || !request.getExecutor().equals(request.getExecutor())) {
-//            throw new IllegalStateException("Request not assigned to current executor.");
-//        }
-//        request.setStatus("REJECTED");
-//        request.setResponse(response);
-//        request.setClosing_date(LocalDateTime.now());
-//        requestRepository.save(request);
+    public Request rejectRequest(Long id, String response) {
+        Request request = requestRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Request not found"));
+        if (!request.getStatus().equals(RequestStatus.NEW)) {
+            throw new IllegalStateException("Only New requests can be rejected");
+        }
+        request.setResponse(response);
+        request.setStatus(RequestStatus.REJECTED);
+        request.setClosing_date(LocalDateTime.now());
 //        kafkaTemplate.send(TOPIC, "Rejected request: " + request_id);
-//    }
+        return requestRepository.save(request);
+    }
+
 }

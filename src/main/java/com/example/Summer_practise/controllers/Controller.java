@@ -48,6 +48,7 @@ public class Controller {
     }
 
     @PatchMapping("/{id}/assign")
+    @Operation(summary = "Get all service request")
     public ResponseEntity<Request> assignRequest(@PathVariable Long id, @RequestParam String executor) {
         try {
             Request request = requestService.assignRequest(id, executor);
@@ -57,5 +58,17 @@ public class Controller {
             System.err.println("Error in assignRequest: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
+    }
+
+    @PatchMapping("/{id}/close")
+    public ResponseEntity<Request> closeRequest(@PathVariable Long id, @RequestParam String response) {
+        Request request = requestService.closeRequest(id, response);
+        return ResponseEntity.ok(request);
+    }
+
+    @PatchMapping("/{id}/reject")
+    public ResponseEntity<Request> rejectRequest(@PathVariable Long id, @RequestParam String response) {
+        Request request = requestService.rejectRequest(id, response);
+        return ResponseEntity.ok(request);
     }
 }
