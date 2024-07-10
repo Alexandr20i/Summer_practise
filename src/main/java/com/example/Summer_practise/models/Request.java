@@ -1,8 +1,9 @@
 package com.example.Summer_practise.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -10,16 +11,39 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "request")
 public class Request {
     @Id
-    private String          request_id;
-    private LocalDateTime   closing_date;
-    private String          contact_name;
-    private String             contact_phone;
-    private LocalDateTime   creation_date;
-    private String          description;
-    private String          executor;
-    private String             inn;
-    private String          response;
-    private String          status;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long request_id;
+
+//    @Column(name = "contact_name", nullable = false)
+    private String contact_name;
+
+//    @Column(name = "contact_phone", nullable = false)
+    private String contact_phone;
+
+//    @Column(name = "description")
+    private String description; // описание
+
+//    @Column(name = "executor")
+    private String executor; // исполнитель
+
+//    @Column(name = "inn", nullable = false)
+    private String inn; //инн
+
+//    @Column(name = "response")
+    private String response; // ответ
+
+//    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private RequestStatus status;
+
+//    @Column(name = "closing_date", nullable = true)
+    private LocalDateTime closing_date;
+
+//    @Column(name = "creation_date", nullable = false, updatable = false)
+    private LocalDateTime creation_date;
 }
