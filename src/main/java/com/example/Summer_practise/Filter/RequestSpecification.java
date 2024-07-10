@@ -21,9 +21,6 @@ public class RequestSpecification implements Specification<Request> {
     private final LocalDateTime startDate;
     private final LocalDateTime endDate;
 
-
-
-
     public RequestSpecification(RequestStatus status, Long request_id, String inn, String executor, LocalDateTime startDate, LocalDateTime endDate) {
         this.status = status;
         this.request_id = request_id;

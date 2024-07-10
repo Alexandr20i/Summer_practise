@@ -4,6 +4,7 @@ import com.example.Summer_practise.Filter.RequestSpecification;
 import com.example.Summer_practise.models.Request;
 import com.example.Summer_practise.models.RequestStatus;
 import com.example.Summer_practise.repository.RequestRepository;
+import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -26,39 +27,30 @@ public class RequestService {
 //    private static final String TOPIC = "requests";
 
     /** Создание нового запроса */
-//    public Request createRequest(Request request) {
-//        request.setStatus(RequestStatus.NEW);
-//        request.setCreation_date(LocalDateTime.now());
-//        Request saveRequest = requestRepository.save(request);
-//        kafkaTemplate.send(TOPIC, "Created request: " + saveRequest.getRequest_id());
-//        return saveRequest;
-//    }
-
     public Request createRequest(Request request) {
         request.setStatus(RequestStatus.NEW);
         request.setCreation_date(LocalDateTime.now());
         return requestRepository.save(request);
     }
 
+    /** Получение списка запросов с фильтрами */
     public List<Request> getRequests (RequestStatus status, Long request_id, String inn, String executor, LocalDateTime startDate, LocalDateTime endDate) {
         RequestSpecification spec = new RequestSpecification(status, request_id, inn, executor, startDate, endDate);
         return requestRepository.findAll(spec);
     }
 
-    /** Получение списка запросов с фильтрами */
-//    public List<Request> getRequests(Map<String, String> filters) {
-//        // Implement filtering logic
-//        return requestRepository.findAll();
-//    }
-
     /** Назначение запроса на исполнителя */
-//    public void assignRequest(String request_id, String executor) {
-//        Request request = requestRepository.findById(request_id).orElseThrow();
-//        request.setExecutor(executor);
-//        request.setStatus("IN_PROGRESS");
-//        requestRepository.save(request);
-//        kafkaTemplate.send(TOPIC, "Assigned request: " + request_id);
-//    }
+    public Request assignRequest(Long id, String executor) {
+        Request request = requestRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Request not found"));
+        if (!request.getStatus().equals(RequestStatus.NEW)) {
+            // Логирование статуса перед исключением
+            System.err.println("Attempting to assign request with ID " + id + " that is in status " + request.getStatus());
+            throw new IllegalStateException("Cannot assign non-new request");
+        }
+        request.setExecutor(executor);
+        request.setStatus(RequestStatus.ASSIGNED);
+        return requestRepository.save(request);
+    }
 
     /** Закрытие запроса */
 //    public void closeRequest(String request_id, String response) {

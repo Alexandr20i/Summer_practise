@@ -27,12 +27,6 @@ public class Controller {
     @Autowired
     private RequestService requestService;
 
-//    @PostMapping
-//    @Operation(summary = "Create a new service request")
-//    public ResponseEntity<Request> createRequest(@RequestBody Request request){
-//        return new ResponseEntity<>(requestService.createRequest(request), HttpStatus.CREATED);
-//    }
-
     @PostMapping
     @Operation(summary = "Create a new service request")
     public ResponseEntity<Request> createRequest(@RequestBody Request request) {
@@ -42,15 +36,6 @@ public class Controller {
 
     @GetMapping
     @Operation(summary = "Get all service request")
-//    public ResponseEntity<List<Request>> getAllRequests(
-//            @RequestParam(required = false) RequestStatus status,
-//            @RequestParam(required = false) String inn,
-//            @RequestParam(required = false) String executor,
-//            @RequestParam(required = false) LocalDateTime startDate,
-//            @RequestParam(required = false) LocalDateTime endDate) {
-//        List<Request> requests = requestService.getRequests(status, inn, executor, startDate, endDate);
-//        return ResponseEntity.ok(requests);
-//    }
     public ResponseEntity<List<Request>> getAllRequests(
             @RequestParam(required = false) RequestStatus status,
             @RequestParam(required = false) Long request_id,
@@ -62,56 +47,15 @@ public class Controller {
         return ResponseEntity.ok(requests);
     }
 
-//    @PostMapping
-//    public ResponseEntity<Request> createRequest(@RequestBody Request request) {
-//        if (request.getContact_name() == null) {
-//            return ResponseEntity.badRequest().body(null);  // Или другой подход к обработке ошибок
-//        }
-//        return new ResponseEntity<>(requestService.createRequest(request), HttpStatus.CREATED);
-//    }
-
-
-
-
-
-//    @PostMapping
-//    @Operation(summary = "Create a new service request")
-//    public ResponseEntity<?> createRequest(@RequestBody Request request) {
-//
-//        // Добавляем логирование
-//        System.out.println("Received request: " + request);
-//
-//        Request createdRequest = requestService.createRequest(request);
-//        return ResponseEntity.ok(Collections.singletonMap("request_id", createdRequest.getRequest_id()));
-//    }
-//
-//    @GetMapping
-//    @Operation(summary = "Получить список запросов на услугу с возможностью фильтрации")
-//    public ResponseEntity<?> getRequests(@Parameter(description = "Filter by status") @RequestParam(required = false) String status,
-//                                         @Parameter(description = "Filter by creation date") @RequestParam(required = false) String creation_date,
-//                                         @Parameter(description = "Filter by closing date") @RequestParam(required = false) String closing_date,
-//                                         @Parameter(description = "Filter by executor") @RequestParam(required = false) String executor,
-//                                         @Parameter(description = "Filter by INN") @RequestParam(required = false) String inn,
-//                                         @Parameter(description = "Filter by request ID") @RequestParam(required = false) String request_id){
-//
-//        List<Request> requests = requestService.getRequests(Map.of(
-//                "status", status,
-//                "creation_date", creation_date,
-//                "closing_date", closing_date,
-//                "executor", executor,
-//                "inn", inn,
-//                "request_id", request_id));
-//
-//        // Добавляем логирование
-//        System.out.println("Creating request: " + requests);
-//
-//        return ResponseEntity.ok(requests);
-//    }
-
-//    @GetMapping
-//    @Operation(summary = "Получить список запросов на услугу")
-//    public
-
-
-
+    @PatchMapping("/{id}/assign")
+    public ResponseEntity<Request> assignRequest(@PathVariable Long id, @RequestParam String executor) {
+        try {
+            Request request = requestService.assignRequest(id, executor);
+            return ResponseEntity.ok(request);
+        } catch (IllegalStateException e) {
+            // Логирование ошибки
+            System.err.println("Error in assignRequest: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
 }
