@@ -20,21 +20,23 @@ public class RequestService {
     @Autowired
     private RequestRepository requestRepository;
 
-//    @Autowired
-//    private KafkaTemplate<String, String> kafkaTemplate;
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
-//    private static final String TOPIC = "requests";
+    private static final String TOPIC = "requests";
 
     /** Создание нового запроса */
     public Request createRequest(Request request) {
         request.setStatus(RequestStatus.NEW);
         request.setCreation_date(LocalDateTime.now());
+        kafkaTemplate.send(TOPIC, "Create request: " + request.getRequest_id());
         return requestRepository.save(request);
     }
 
     /** Получение списка запросов с фильтрами */
     public List<Request> getRequests (RequestStatus status, Long request_id, String inn, String executor, LocalDateTime startDate, LocalDateTime endDate) {
         RequestSpecification spec = new RequestSpecification(status, request_id, inn, executor, startDate, endDate);
+        kafkaTemplate.send(TOPIC, "Get request: " + request_id);
         return requestRepository.findAll(spec);
     }
 
@@ -48,6 +50,7 @@ public class RequestService {
         }
         request.setExecutor(executor);
         request.setStatus(RequestStatus.ASSIGNED);
+        kafkaTemplate.send(TOPIC, "Assign request: " + id);
         return requestRepository.save(request);
     }
 
@@ -60,6 +63,7 @@ public class RequestService {
         request.setResponse(response);
         request.setStatus(RequestStatus.CLOSED);
         request.setClosing_date(LocalDateTime.now());
+        kafkaTemplate.send(TOPIC, "Closed request: " + id);
         return requestRepository.save(request);
     }
 
@@ -73,7 +77,7 @@ public class RequestService {
         request.setResponse(response);
         request.setStatus(RequestStatus.REJECTED);
         request.setClosing_date(LocalDateTime.now());
-//        kafkaTemplate.send(TOPIC, "Rejected request: " + request_id);
+        kafkaTemplate.send(TOPIC, "Rejected request: " + id);
         return requestRepository.save(request);
     }
 

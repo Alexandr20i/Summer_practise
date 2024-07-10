@@ -29,7 +29,15 @@ public class Controller {
 
     @PostMapping
     @Operation(summary = "Create a new service request")
-    public ResponseEntity<Request> createRequest(@RequestBody Request request) {
+    public ResponseEntity<Request> createRequest( @RequestParam String inn,
+                                                  @RequestParam String contact_name,
+                                                  @RequestParam String contact_phone,
+                                                  @RequestParam String description) {
+        Request request = new Request();
+        request.setInn(inn);
+        request.setContact_name(contact_name);
+        request.setContact_phone(contact_phone);
+        request.setDescription(description);
         Request createdRequest = requestService.createRequest(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdRequest);
     }
