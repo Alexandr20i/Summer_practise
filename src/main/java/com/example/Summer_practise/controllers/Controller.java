@@ -4,20 +4,15 @@ import com.example.Summer_practise.models.Request;
 import com.example.Summer_practise.models.RequestStatus;
 import com.example.Summer_practise.service.RequestService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/request")
@@ -56,7 +51,7 @@ public class Controller {
     }
 
     @PatchMapping("/{id}/assign")
-    @Operation(summary = "Get all service request")
+    @Operation(summary = "Assign a request")
     public ResponseEntity<Request> assignRequest(@PathVariable Long id, @RequestParam String executor) {
         try {
             Request request = requestService.assignRequest(id, executor);
@@ -69,12 +64,14 @@ public class Controller {
     }
 
     @PatchMapping("/{id}/close")
+    @Operation(summary = "Close assignes request")
     public ResponseEntity<Request> closeRequest(@PathVariable Long id, @RequestParam String response) {
         Request request = requestService.closeRequest(id, response);
         return ResponseEntity.ok(request);
     }
 
     @PatchMapping("/{id}/reject")
+    @Operation(summary = "reject a new request")
     public ResponseEntity<Request> rejectRequest(@PathVariable Long id, @RequestParam String response) {
         Request request = requestService.rejectRequest(id, response);
         return ResponseEntity.ok(request);

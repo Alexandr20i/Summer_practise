@@ -12,7 +12,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class RequestService {
